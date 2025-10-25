@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql2/promise');
@@ -6,28 +5,13 @@ const mysql = require('mysql2/promise');
 const app = express();
 app.use(bodyParser.json());
 
-// Environment variables (Render will inject these)
-const {
-  MYSQLHOST,
-  MYSQLPORT,
-  MYSQLUSER,
-  MYSQLPASSWORD,
-  MYSQLDATABASE,
-  PORT
-} = process.env;
-
-if (!MYSQLHOST || !MYSQLUSER || !MYSQLPASSWORD || !MYSQLDATABASE) {
-  console.error('❌ Missing required environment variables!');
-  process.exit(1);
-}
-
-// Create MySQL connection pool
+// Hardcoded Railway MySQL internal connection
 const pool = mysql.createPool({
-  host: MYSQLHOST,
-  port: MYSQLPORT,
-  user: MYSQLUSER,
-  password: MYSQLPASSWORD,
-  database: MYSQLDATABASE,
+  host: 'mysql.railway.internal', // Railway internal host
+  port: 3306,
+  user: 'root',
+  password: 'aIOMgKsfRLUUQhXErEfiROPmVOMLZkcM',
+  database: 'railway',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -124,6 +108,8 @@ app.delete('/users/:id', async (req, res) => {
   }
 });
 
-app.listen(PORT || 3000, () => {
-  console.log(`🚀 Server running on port ${PORT || 3000}`);
+// Start server
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
